@@ -139,11 +139,9 @@ public class Hand {
 		for (int i = 1; i <= 4; i++) {
 			if (getNumberOfSuits(i) == 5) {
 				myEvaluation[0] = 6;
-				if (hand[0].getValue() == 1)
-					myEvaluation[1] = 14;
-				else
-					myEvaluation[1] = hand[0].getValue();
-				myEvaluation[2] = hand[4].getValue();
+				myEvaluation[1] = 0;//doesn't matter it's a flush just check high card
+				myEvaluation[2] = 0;
+ 
 				// myEvaluation[3] = hand[0].getValue();
 				break;
 			}
