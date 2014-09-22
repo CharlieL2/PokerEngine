@@ -33,6 +33,7 @@ public class Play {
 				break;
 			}
 		}
+		System.out.println(playerHand.hand[0].getValue()+ " " +playerHand.hand[1].getValue()+ " " +playerHand.hand[2].getValue()+ " " +playerHand.hand[3].getValue()+ " " +playerHand.hand[4].getValue());
 		System.out.println(playerScore[0]+ " " +playerScore[1]+ " " +playerScore[2]+ " " +playerScore[3]);
 		
 		System.out.println(computerScore[0] + " " + computerScore[1] + " " + computerScore[2] + " " + computerScore[3]);
