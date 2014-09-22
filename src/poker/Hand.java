@@ -1,6 +1,6 @@
 package poker;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Hand {
 	private Card[] hand;
@@ -16,29 +16,33 @@ public class Hand {
 		for (int i = 0; i < 5; i++) {
 			hand[i] = deck.draw();
 		}
-		
-	}
-/*
- * int[] handValues = { hand[0].getValue(), hand[1].getValue(),
-				hand[2].getValue(), hand[3].getValue(), hand[4].getValue() };
-		int[] handSuits = { hand[0].getSuit(), hand[1].getSuit(),
-				hand[2].getSuit(), hand[3].getSuit(), hand[4].getSuit() };
-*/
-	private void organize() {
-		// organize card values, ace high card (1)
+
 	}
 
-	// Evaluation
-	// Evaluate datatype
+	/*
+	 * int[] handValues = { hand[0].getValue(), hand[1].getValue(),
+	 * hand[2].getValue(), hand[3].getValue(), hand[4].getValue() }; int[]
+	 * handSuits = { hand[0].getSuit(), hand[1].getSuit(), hand[2].getSuit(),
+	 * hand[3].getSuit(), hand[4].getSuit() };
+	 */
+
+	private int[] organize() { // organize card values, ace high card (1) }
+		int[] handValues = { hand[0].getValue(), hand[1].getValue(),
+				hand[2].getValue(), hand[3].getValue(), hand[4].getValue() };
+		Arrays.sort(handValues);
+		return handValues;
+	}
+
+	// Evaluation // Evaluate datatype
 
 	/*
 	 * There are 4 categories for evaluation 1. Hand i.e. Royal Flush = 10 2.
-	 * Hand high card 3. Hand low card 4. Hand left over high card
+	 * and high card 3. Hand low card 4. Hand left over high card
 	 */
 
 	private int[] myEvaluation = new int[4];
 
-	// getter for myEvaluation
+	// CL :getter for myEvaluation
 
 	protected int[] getEvaluation() {
 		return myEvaluation;
@@ -78,7 +82,8 @@ public class Hand {
 					myEvaluation[0] = 10;
 					myEvaluation[1] = 1;
 					myEvaluation[2] = 10;
-					myEvaluation[3] = 0;
+					// myEvaluation[3] = 0; CL: no need since checkHighCard sets
+					// this value already
 				}
 				continue;
 			} else {
@@ -99,7 +104,7 @@ public class Hand {
 					myEvaluation[0] = 9;
 					myEvaluation[1] = hand[0].getValue();
 					myEvaluation[2] = hand[4].getValue();
-					myEvaluation[3] = 0;
+					// myEvaluation[3] = 0;
 				}
 				continue;
 			} else {
@@ -109,12 +114,12 @@ public class Hand {
 	}
 
 	private void checkFourOfAKind() {
-		for (int i = 0; i < 13; i++) {
+		for (int i = 1; i <= 13; i++) {
 			if (getNumberOfValues(i) == 4) {
 				myEvaluation[0] = 8;
 				myEvaluation[1] = i;
 				myEvaluation[2] = i;
-				myEvaluation[3] = 0;// Find leftover card
+				// myEvaluation[3] = hand[4].getValue();
 				break;
 			}
 		}
@@ -126,49 +131,96 @@ public class Hand {
 			myEvaluation[0] = 7;
 			myEvaluation[1] = hand[0].getValue();
 			myEvaluation[2] = hand[4].getValue();
-			myEvaluation[3] = hand[0].getValue();
+			// myEvaluation[3] = hand[0].getValue();
 		}
 	}
 
 	private void checkFlush() {
-		for (int i = 0; i < 4; i++) {
+		for (int i = 1; i <= 4; i++) {
 			if (getNumberOfSuits(i) == 5) {
 				myEvaluation[0] = 6;
-				myEvaluation[1] = hand[0].getValue();
+				if (hand[0].getValue() == 1)
+					myEvaluation[1] = 14;
+				else
+					myEvaluation[1] = hand[0].getValue();
 				myEvaluation[2] = hand[4].getValue();
-				myEvaluation[3] = hand[0].getValue();
+				// myEvaluation[3] = hand[0].getValue();
 				break;
 			}
 		}
 	}
 
 	private void checkStraight() {
+		int[] handValues = organize();
+		if (handValues[4] == handValues[3] + 1
+				&& handValues[3] == handValues[2] + 1
+				&& handValues[2] == handValues[1] + 1
+				&& handValues[1] == handValues[0] + 1) {
+			myEvaluation[0] = 5;
+			myEvaluation[1] = handValues[4];
+			myEvaluation[2] = handValues[0];
+			// myEvaluation[3] = 0;
+		} else if (handValues[0] == 1) { // to handle aces
+			handValues[0] = 14;
+			if (handValues[0] == handValues[4] + 1
+					&& handValues[4] == handValues[3] + 1
+					&& handValues[3] == handValues[2] + 1
+					&& handValues[2] == handValues[1] + 1) {
+				myEvaluation[0] = 5;
+				myEvaluation[1] = handValues[4];
+				myEvaluation[2] = handValues[0];
+			}
+		}
 
 	}
 
 	private void checkThreeOfAKind() {
-		for (int i = 0; i < 13; i++) {
+		for (int i = 1; i <= 13; i++) {
 			if (getNumberOfValues(i) == 3) {
 				myEvaluation[0] = 4;
-				myEvaluation[1] = i;
-				myEvaluation[2] = i;
-				myEvaluation[3] = 0;// Find leftover card
-				break;
+				if (i == 1) {// handle aces
+					myEvaluation[1] = 14;
+					myEvaluation[2] = 14;
+				} else {
+					myEvaluation[1] = i;
+					myEvaluation[2] = i;
+				}
+				// myEvaluation[3] = handValues[0];
+
 			}
 		}
 	}
 
 	private void checkTwoPair() {
-
+		for (int i = 1; i <= 13; i++) {
+			for (int b = 0; b < 13; b++) {
+				if (getNumberOfValues(i) == 2 && getNumberOfValues(b) == 2) {
+					myEvaluation[0] = 3;
+					if (b > i) {
+						myEvaluation[1] = b;
+						myEvaluation[2] = i;
+					} else {
+						myEvaluation[1] = i;
+						myEvaluation[2] = b;
+					}
+					// myEvaluation[3] = 0;
+				}
+			}
+		}
 	}
 
 	private void checkOnePair() {
-		for (int i = 0; i < 13; i++) {
+		for (int i = 1; i <= 13; i++) {
 			if (getNumberOfValues(i) == 2) {
 				myEvaluation[0] = 2;
-				myEvaluation[1] = i;
-				myEvaluation[2] = i;
-				myEvaluation[3] = 0;// Find leftover card
+				if (i == 1) {// handle aces
+					myEvaluation[1] = 14;
+					myEvaluation[2] = 14;
+				} else {
+					myEvaluation[1] = i;
+					myEvaluation[2] = i;
+				}
+				// myEvaluation[3] = 0;
 			}
 		}
 	}
@@ -179,6 +231,9 @@ public class Hand {
 			Card card = hand[i];
 			if (card.getValue() > highCard) {
 				highCard = card.getValue();
+			} else if (card.getValue() == 1) {
+				highCard = 14;
+				break;
 			}
 		}
 		myEvaluation[3] = highCard;
