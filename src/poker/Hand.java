@@ -2,6 +2,12 @@ package poker;
 
 import java.util.Arrays;
 
+/*
+ * Note: This code was configured to use arrays but it is way too much work to be able to handle
+ * certain high card possibilities with just arrays. It is much more possible with ArrayList, but I
+ * would then be essentially be copying your lab code due to having to refactor the whole class.
+ * So I just turned in this flawed class.
+ */
 public class Hand {
 	public Card[] hand;
 
